@@ -22,8 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = MyretailRestfulServiceApplication.class)
 @TestPropertySource(locations="classpath:application.properties")
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 public class ProductsControllerTest {
 
     @Autowired
@@ -41,7 +41,7 @@ public class ProductsControllerTest {
 
         when(productController.getProductById(1)).thenReturn(product);
 
-        mockMvc.perform(get("v1/products/1"))
+        mockMvc.perform(get("/v1/products/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
