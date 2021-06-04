@@ -334,3 +334,9 @@ build/
 
 
 # End of Spring Initializr entries
+
+# Start of properties files
+
+application.properties
+
+# End of properties files
