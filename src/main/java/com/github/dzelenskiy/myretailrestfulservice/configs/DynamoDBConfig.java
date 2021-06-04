@@ -13,6 +13,7 @@ import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRep
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb")
@@ -34,19 +35,21 @@ public class DynamoDBConfig {
     }
 
     @Bean
+    @Primary
     public DynamoDBMapperConfig dynamoDBMapperConfig() {
         return DynamoDBMapperConfig.DEFAULT;
-    }
-
-    @Bean
-    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB, DynamoDBMapperConfig config) {
-        return new DynamoDBMapper(amazonDynamoDB, config);
     }
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder.standard().withCredentials(amazonAWSCredentialsProvider())
                 .withRegion(Regions.US_EAST_1).build();
+    }
+
+    @Bean
+    @Primary
+    public DynamoDBMapper dynamoDBMapper(AmazonDynamoDB amazonDynamoDB, DynamoDBMapperConfig config) {
+        return new DynamoDBMapper(amazonDynamoDB, config);
     }
 
 }
