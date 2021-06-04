@@ -15,8 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableDynamoDBRepositories
-        (basePackages = "com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb")
+@EnableDynamoDBRepositories(basePackages = "com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb")
 public class DynamoDBConfig {
 
     @Value("${amazon.aws.accesskey}")
