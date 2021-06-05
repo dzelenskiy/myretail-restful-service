@@ -40,22 +40,22 @@ public class ProductsControllerTest {
     public void getProductById() throws Exception {
 
         Product product = new Product();
-        product.setId(1);
-        product.setName("Test");
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
         CurrentPrice currentPrice = new CurrentPrice();
-        currentPrice.setValue(new BigDecimal("21.99"));
+        currentPrice.setValue(new BigDecimal("7.99"));
         currentPrice.setCurrencyCode("USD");
         product.setCurrentPrice(currentPrice);
 
-        when(productController.getProductById(1)).thenReturn(product);
+        when(productController.getProductById(13860428)).thenReturn(product);
 
-        mockMvc.perform(get("/v1/products/1"))
+        mockMvc.perform(get("/v1/products/13860428"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Test"))
-                .andExpect(jsonPath("$.current_price.value").value(21.99))
+                .andExpect(jsonPath("$.id").value(13860428))
+                .andExpect(jsonPath("$.name").value("The Big Lebowski (Blu-ray)"))
+                .andExpect(jsonPath("$.current_price.value").value(7.99))
                 .andExpect(jsonPath("$.current_price.currency_code").value("USD"));
     }
 
