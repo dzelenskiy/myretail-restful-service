@@ -2,6 +2,7 @@ package com.github.dzelenskiy.myretailrestfulservice.services;
 
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ public class ProductServiceImplTest {
     @InjectMocks
     private ProductService productService = new ProductServiceImpl();
 
+    @Test
     public void getProductById() {
 
         Product product = new Product();

@@ -332,5 +332,10 @@ build/
 ### VS Code ###
 .vscode/
 
-
 # End of Spring Initializr entries
+
+# Start of properties files to ignore
+
+target-redsky-api.properties
+
+# End of properties files to ignore
