@@ -18,18 +18,6 @@
 		<spring-cloud.version>Hoxton.SR11</spring-cloud.version>
 	</properties>
 	<dependencies>
-<!--		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hamcrest</groupId>
-					<artifactId>hamcrest-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
-		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk-dynamodb</artifactId>
@@ -117,6 +105,15 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<classpathDependencyExcludes>
+						<classpathDependencyExcludes>org.springframework.cloud:spring-cloud-aws-autoconfigure</classpathDependencyExcludes>
+					</classpathDependencyExcludes>
 				</configuration>
 			</plugin>
 		</plugins>
