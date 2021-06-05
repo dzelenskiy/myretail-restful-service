@@ -19,22 +19,22 @@ import static org.assertj.core.api.Assertions.assertThat;
         classes = { MyretailRestfulServiceApplication.class }
 )
 //@AutoConfigureMockMvc(addFilters = false)
-public class ProductServiceImplTest {
+public class ProductDetailsServiceTest {
 
     @Autowired
-    private ProductService productService;
+    private ProductDetailsService productDetailsService;
 
     @Test
-    public void getProductById() {
+    public void getProductDetailsById() {
 
-        Product product = new Product();
-        product.setId(13860428);
-        product.setName("The Big Lebowski (Blu-ray)");
+        ProductDetails productDetails = new ProductDetails();
+        productDetails.setId(13860428);
+        productDetails.setName("The Big Lebowski (Blu-ray)");
 
-        Product productFromService = productService.getProductById(13860428);
+        ProductDetails productDetailsFromService = productDetailsService.getProductDetailsById(13860428);
 
-        assertThat(productFromService.getId()).isEqualTo(product.getId());
-        assertThat(productFromService.getName()).isEqualTo(product.getName());
+        assertThat(productDetailsFromService.getId()).isEqualTo(productDetails.getId());
+        assertThat(productDetailsFromService.getName()).isEqualTo(productDetails.getName());
 
     }
 
