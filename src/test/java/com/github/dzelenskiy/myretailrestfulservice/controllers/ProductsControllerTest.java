@@ -13,6 +13,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,6 +43,10 @@ public class ProductsControllerTest {
         Product product = new Product();
         product.setId(1);
         product.setName("Test");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("21.99"));
+        currentPrice.setCurrencyCode("USD");
+        product.setCurrentPrice(currentPrice);
 
         when(productController.getProductById(1)).thenReturn(product);
 
@@ -47,7 +55,9 @@ public class ProductsControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Test"));
+                .andExpect(jsonPath("$.name").value("Test"))
+                .andExpect(jsonPath("$.current_price.value").value(21.99))
+                .andExpect(jsonPath("$.current_Price.currency_code").value("USD"));
     }
 
 }
