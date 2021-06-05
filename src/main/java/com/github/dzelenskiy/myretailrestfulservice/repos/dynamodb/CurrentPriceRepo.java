@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface CurrentPriceRepo extends CrudRepository<CurrentPrice, Integer> {
 
-    List<CurrentPrice> findById(int id);
+    List<CurrentPrice> findByProductId(int productId);
 
 }

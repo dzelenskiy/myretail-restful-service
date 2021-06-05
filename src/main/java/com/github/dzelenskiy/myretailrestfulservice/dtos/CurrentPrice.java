@@ -19,7 +19,7 @@ public class CurrentPrice {
 
     @DynamoDBHashKey
     @JsonIgnore
-    private int id;
+    private int productId;
 
     @DynamoDBAttribute
     private BigDecimal value;
