@@ -3,6 +3,7 @@ package com.github.dzelenskiy.myretailrestfulservice.services;
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
 import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,14 +26,15 @@ import static org.mockito.Mockito.when;
         classes = { MyretailRestfulServiceApplication.class }
 )
 //@AutoConfigureMockMvc(addFilters = false)
-public class CurrentPriceServiceTest {
+public class CurrentPriceServiceImplTest {
 
     @Mock
     private CurrentPriceRepo currentPriceRepo;
 
     @InjectMocks
-    private CurrentPriceService currentPriceService;
+    private CurrentPriceService currentPriceService = new CurrentPriceServiceImpl();
 
+    @Test
     public void getCurrentPriceByProductId() {
 
         CurrentPrice currentPrice = new CurrentPrice();
@@ -42,7 +44,7 @@ public class CurrentPriceServiceTest {
 
         when(currentPriceRepo.findByProductId(13860428)).thenReturn(singletonList(currentPrice));
 
-        CurrentPrice currentPriceFromService = currentPriceService.findCurrentPriceByProductId(13860428);
+        CurrentPrice currentPriceFromService = currentPriceService.getCurrentPriceByProductId(13860428);
 
         assertThat(currentPriceFromService.getProductId()).isEqualTo(currentPrice.getProductId());
         assertThat(currentPriceFromService.getValue()).isEqualTo(currentPrice.getValue());
