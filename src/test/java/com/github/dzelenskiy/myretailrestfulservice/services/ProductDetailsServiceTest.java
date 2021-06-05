@@ -1,7 +1,10 @@
 package com.github.dzelenskiy.myretailrestfulservice.services;
 
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
+import com.github.dzelenskiy.myretailrestfulservice.dtos.Item;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
+import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDescription;
+import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDetails;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,13 +31,24 @@ public class ProductDetailsServiceTest {
     public void getProductDetailsById() {
 
         ProductDetails productDetails = new ProductDetails();
-        productDetails.setId(13860428);
-        productDetails.setName("The Big Lebowski (Blu-ray)");
+
+        Item item = new Item();
+        item.setTcin(13860428);
+
+        ProductDescription productDescription = new ProductDescription();
+        productDescription.setTitle("The Big Lebowski (Blu-ray)");
+
+        item.setProductDescription(productDescription);
+
+        productDetails.setItem(item);
 
         ProductDetails productDetailsFromService = productDetailsService.getProductDetailsById(13860428);
 
-        assertThat(productDetailsFromService.getId()).isEqualTo(productDetails.getId());
-        assertThat(productDetailsFromService.getName()).isEqualTo(productDetails.getName());
+        assertThat(productDetailsFromService.getItem().getTcin())
+                .isEqualTo(productDetails.getItem().getTcin());
+
+        assertThat(productDetailsFromService.getItem().getProductDescription().getTitle())
+                .isEqualTo(productDetails.getItem().getProductDescription().getTitle());
 
     }
 

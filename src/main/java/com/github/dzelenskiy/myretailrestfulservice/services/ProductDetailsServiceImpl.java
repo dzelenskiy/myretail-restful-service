@@ -1,6 +1,8 @@
 package com.github.dzelenskiy.myretailrestfulservice.services;
 
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
+import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDetails;
+import com.github.dzelenskiy.myretailrestfulservice.dtos.RedskyAPIResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
@@ -12,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @PropertySource("classpath:target-redsky-api.properties")
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Value("${url}")
     private String apiURL;
@@ -24,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
     private String key;
 
     @Override
-    public Product getProductById(int id) {
+    public ProductDetails getProductDetailsById(int id) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
@@ -37,9 +39,12 @@ public class ProductServiceImpl implements ProductService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        Product product = restTemplate.getForObject(builder.toUriString(), Product.class, entity);
+        RedskyAPIResponse redskyAPIResponse =
+                restTemplate.getForObject(builder.toUriString(), RedskyAPIResponse.class, entity);
 
-        return product;
+        ProductDetails productDetails = redskyAPIResponse.getProductDetails();
+
+        return productDetails;
     }
 
 }
