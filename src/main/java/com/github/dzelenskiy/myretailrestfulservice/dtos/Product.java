@@ -3,6 +3,7 @@ package com.github.dzelenskiy.myretailrestfulservice.dtos;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -13,10 +14,14 @@ import lombok.*;
 @DynamoDBTable(tableName = "Product")
 public class Product {
 
-    @DynamoDBHashKey(attributeName="id")
+    @DynamoDBHashKey
     private int id;
 
-    @DynamoDBAttribute(attributeName="name")
+    @DynamoDBAttribute
     private String name;
+
+    @DynamoDBAttribute
+    @JsonProperty("current_price")
+    private CurrentPrice currentPrice;
 
 }
