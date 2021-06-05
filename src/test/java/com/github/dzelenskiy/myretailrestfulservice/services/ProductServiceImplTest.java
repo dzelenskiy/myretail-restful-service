@@ -5,6 +5,7 @@ import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,8 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 //@AutoConfigureMockMvc(addFilters = false)
 public class ProductServiceImplTest {
 
-    @InjectMocks
-    private ProductService productService = new ProductServiceImpl();
+    @Autowired
+    private ProductService productService;
 
     @Test
     public void getProductById() {
