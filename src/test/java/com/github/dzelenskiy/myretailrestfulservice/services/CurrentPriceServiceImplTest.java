@@ -17,7 +17,7 @@ import static java.util.Collections.singletonList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(locations="classpath:application.properties")
@@ -52,6 +52,18 @@ public class CurrentPriceServiceImplTest {
 
     }
 
+    @Test
+    public void updateCurrentPrice() {
 
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setProductId(12954218);
+        currentPrice.setValue(new BigDecimal("1.99"));
+        currentPrice.setCurrencyCode("USD");
+
+        currentPriceService.updateCurrentPrice(currentPrice);
+
+        verify(currentPriceRepo, times(1)).save(currentPrice);
+
+    }
 
 }

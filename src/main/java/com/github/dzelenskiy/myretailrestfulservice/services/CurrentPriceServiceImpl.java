@@ -4,11 +4,13 @@ import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
 import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@Transactional
 public class CurrentPriceServiceImpl implements CurrentPriceService {
 
     private static final String DEFAULT_PRICE = "9.99";
@@ -30,4 +32,11 @@ public class CurrentPriceServiceImpl implements CurrentPriceService {
             return currentPriceList.get(0);
         }
     }
+
+    @Override
+    public void updateCurrentPrice(CurrentPrice currentPrice) {
+        currentPriceRepo.save(currentPrice);
+    }
+
+
 }
