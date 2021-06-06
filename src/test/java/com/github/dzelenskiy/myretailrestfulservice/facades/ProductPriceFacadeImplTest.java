@@ -30,10 +30,10 @@ import static org.mockito.Mockito.when;
 public class ProductPriceFacadeImplTest {
 
     @Mock
-    private ProductDetailsService productDetailsService = new ProductDetailsServiceImpl();
+    private ProductDetailsService productDetailsService;
 
     @Mock
-    private CurrentPriceService currentPriceService = new CurrentPriceServiceImpl();
+    private CurrentPriceService currentPriceService;
 
     @InjectMocks
     private ProductPriceFacade productPriceFacade = new ProductPriceFacadeImpl();
@@ -77,6 +77,5 @@ public class ProductPriceFacadeImplTest {
         assertThat(productFromFacade.getCurrentPrice().getValue()).isEqualTo(new BigDecimal("7.99"));
         assertThat(productFromFacade.getCurrentPrice().getCurrencyCode()).isEqualTo("USD");
     }
-
 
 }

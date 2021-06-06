@@ -3,8 +3,11 @@ package com.github.dzelenskiy.myretailrestfulservice.controllers;
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
+import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacade;
+import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacadeImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +37,7 @@ public class ProductsControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ProductController productController;
+    private ProductPriceFacade productPriceFacade;
 
     @Test
     public void getProductById() throws Exception {
@@ -43,11 +46,12 @@ public class ProductsControllerTest {
         product.setId(13860428);
         product.setName("The Big Lebowski (Blu-ray)");
         CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setProductId(13860428);
         currentPrice.setValue(new BigDecimal("7.99"));
         currentPrice.setCurrencyCode("USD");
         product.setCurrentPrice(currentPrice);
 
-        when(productController.getProductById(13860428)).thenReturn(product);
+        when(productPriceFacade.getProductWithCurrentPriceById(13860428)).thenReturn(product);
 
         mockMvc.perform(get("/v1/products/13860428"))
                 .andDo(print())
