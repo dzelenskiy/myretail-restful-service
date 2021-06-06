@@ -33,7 +33,7 @@ public class ProductPriceFacadeImplTest {
     private ProductPriceFacade productPriceFacade = new ProductPriceFacadeImpl();
 
     @Test
-    public void getProductWithCurrentPrice() {
+    public void getProductWithCurrentPriceById() {
 
     }
 
