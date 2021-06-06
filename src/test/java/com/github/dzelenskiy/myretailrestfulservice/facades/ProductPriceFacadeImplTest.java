@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(locations="classpath:application.properties")
@@ -77,6 +77,59 @@ public class ProductPriceFacadeImplTest {
         assertThat(productFromFacade.getCurrentPrice().getProductId()).isEqualTo(13860428);
         assertThat(productFromFacade.getCurrentPrice().getValue()).isEqualTo(new BigDecimal("7.99"));
         assertThat(productFromFacade.getCurrentPrice().getCurrencyCode()).isEqualTo("USD");
+    }
+
+
+    @Test
+    public void updateProductCurrentPrice_withExistingProduct() throws ProductDetailsNotFoundException {
+
+        ProductDetails productDetails = new ProductDetails();
+
+        Item item = new Item();
+        item.setTcin(13860428);
+
+        ProductDescription productDescription = new ProductDescription();
+        productDescription.setTitle("The Big Lebowski (Blu-ray)");
+
+        item.setProductDescription(productDescription);
+
+        productDetails.setItem(item);
+
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setProductId(13860428);
+        currentPrice.setValue(new BigDecimal("7.99"));
+        currentPrice.setCurrencyCode("USD");
+
+        product.setCurrentPrice(currentPrice);
+
+        when(productDetailsService.getProductDetailsById(13860428)).thenReturn(productDetails);
+
+        productPriceFacade.updateProductCurrentPrice(currentPrice);
+
+        verify(currentPriceService, times(1)).updateCurrentPrice(currentPrice);
+
+    }
+
+    @Test
+    public void updateProductCurrentPrice_withNonExistentProduct() throws ProductDetailsNotFoundException {
+
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setProductId(0);
+        currentPrice.setValue(new BigDecimal("9.99"));
+        currentPrice.setCurrencyCode("USD");
+
+        when(productDetailsService.getProductDetailsById(0))
+                .thenThrow(new ProductDetailsNotFoundException("Unable to retrieve product details."));
+
+        productPriceFacade.updateProductCurrentPrice(currentPrice);
+
+        verify(currentPriceService, times(0)).updateCurrentPrice(currentPrice);
+
     }
 
 }
