@@ -3,6 +3,7 @@ package com.github.dzelenskiy.myretailrestfulservice.controllers;
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
+import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacade;
 import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacadeImpl;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class ProductsControllerTest {
     private ProductPriceFacade productPriceFacade;
 
     @Test
-    public void getProductById() throws Exception {
+    public void getProductById_success() throws Exception {
 
         Product product = new Product();
         product.setId(13860428);
@@ -61,6 +62,16 @@ public class ProductsControllerTest {
                 .andExpect(jsonPath("$.name").value("The Big Lebowski (Blu-ray)"))
                 .andExpect(jsonPath("$.current_price.value").value(7.99))
                 .andExpect(jsonPath("$.current_price.currency_code").value("USD"));
+    }
+
+    @Test
+    public void getProductById_notFound() throws Exception {
+        when(productPriceFacade.getProductWithCurrentPriceById(0))
+                .thenThrow(new ProductDetailsNotFoundException("Unable to retrieve product details."));
+
+        mockMvc.perform(get("/v1/products/0"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 }

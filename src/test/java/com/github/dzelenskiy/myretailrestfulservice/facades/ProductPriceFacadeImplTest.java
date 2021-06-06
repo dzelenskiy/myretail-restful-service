@@ -2,6 +2,7 @@ package com.github.dzelenskiy.myretailrestfulservice.facades;
 
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.*;
+import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
 import com.github.dzelenskiy.myretailrestfulservice.services.CurrentPriceService;
 import com.github.dzelenskiy.myretailrestfulservice.services.CurrentPriceServiceImpl;
@@ -39,7 +40,7 @@ public class ProductPriceFacadeImplTest {
     private ProductPriceFacade productPriceFacade = new ProductPriceFacadeImpl();
 
     @Test
-    public void getProductWithCurrentPriceById() {
+    public void getProductWithCurrentPriceById() throws ProductDetailsNotFoundException {
 
         ProductDetails productDetails = new ProductDetails();
 

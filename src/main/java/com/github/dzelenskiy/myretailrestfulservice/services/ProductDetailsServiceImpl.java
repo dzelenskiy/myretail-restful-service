@@ -3,12 +3,14 @@ package com.github.dzelenskiy.myretailrestfulservice.services;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDetails;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.RedskyAPIResponse;
+import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -26,7 +28,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
     private String key;
 
     @Override
-    public ProductDetails getProductDetailsById(int id) {
+    public ProductDetails getProductDetailsById(int id) throws ProductDetailsNotFoundException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
@@ -39,10 +41,17 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        RedskyAPIResponse redskyAPIResponse =
-                restTemplate.getForObject(builder.toUriString(), RedskyAPIResponse.class, entity);
 
-        ProductDetails productDetails = redskyAPIResponse.getProductDetails();
+        ProductDetails productDetails = null;
+
+        try {
+            RedskyAPIResponse redskyAPIResponse =
+                    restTemplate.getForObject(builder.toUriString(), RedskyAPIResponse.class, entity);
+
+            productDetails = redskyAPIResponse.getProductDetails();
+        } catch (Exception e) {
+            throw new ProductDetailsNotFoundException("Unable to retrieve product details.");
+        }
 
         return productDetails;
     }

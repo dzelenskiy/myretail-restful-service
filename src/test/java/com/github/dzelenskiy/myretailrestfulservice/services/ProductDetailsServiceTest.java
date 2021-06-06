@@ -5,6 +5,7 @@ import com.github.dzelenskiy.myretailrestfulservice.dtos.Item;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDescription;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDetails;
+import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +29,7 @@ public class ProductDetailsServiceTest {
     private ProductDetailsService productDetailsService;
 
     @Test
-    public void getProductDetailsById_theBigLebowski() {
+    public void getProductDetailsById_theBigLebowski() throws ProductDetailsNotFoundException {
 
         ProductDetails productDetails = new ProductDetails();
 
@@ -53,7 +54,7 @@ public class ProductDetailsServiceTest {
     }
 
     @Test
-    public void getProductDetailsById_goodAndGatherPeanutButter() {
+    public void getProductDetailsById_goodAndGatherPeanutButter() throws ProductDetailsNotFoundException {
 
         ProductDetails productDetails = new ProductDetails();
 
@@ -78,7 +79,7 @@ public class ProductDetailsServiceTest {
     }
 
     @Test
-    public void getProductDetailsById_jifNaturalPeanutButter() {
+    public void getProductDetailsById_jifNaturalPeanutButter() throws ProductDetailsNotFoundException {
 
         ProductDetails productDetails = new ProductDetails();
 
@@ -103,7 +104,7 @@ public class ProductDetailsServiceTest {
     }
 
     @Test
-    public void getProductDetailsById_kraftMacAndCheese() {
+    public void getProductDetailsById_kraftMacAndCheese() throws ProductDetailsNotFoundException {
 
         ProductDetails productDetails = new ProductDetails();
 
