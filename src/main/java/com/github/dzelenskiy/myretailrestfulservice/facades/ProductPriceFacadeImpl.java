@@ -8,6 +8,6 @@ public class ProductPriceFacadeImpl implements ProductPriceFacade {
 
     @Override
     public Product getProductWithCurrentPriceById(int id) {
-        return null;
+        return new Product();
     }
 }
