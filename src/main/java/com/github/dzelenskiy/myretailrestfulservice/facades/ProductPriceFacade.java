@@ -6,5 +6,6 @@ import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNot
 public interface ProductPriceFacade {
 
     Product getProductWithCurrentPriceById(int id) throws ProductDetailsNotFoundException;
+    void updateProductCurrentPrice(Product product) throws ProductDetailsNotFoundException;
 
 }

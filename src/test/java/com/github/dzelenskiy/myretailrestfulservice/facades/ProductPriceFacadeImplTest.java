@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -29,6 +30,9 @@ import static org.mockito.Mockito.*;
 )
 //@AutoConfigureMockMvc(addFilters = false)
 public class ProductPriceFacadeImplTest {
+
+    private static final String PRODUCT_DETAILS_NOT_FOUND_MESSAGE =
+            "Unable to retrieve product details.";
 
     @Mock
     private ProductDetailsService productDetailsService;
@@ -109,7 +113,7 @@ public class ProductPriceFacadeImplTest {
 
         when(productDetailsService.getProductDetailsById(13860428)).thenReturn(productDetails);
 
-        productPriceFacade.updateProductCurrentPrice(currentPrice);
+        productPriceFacade.updateProductCurrentPrice(product);
 
         verify(currentPriceService, times(1)).updateCurrentPrice(currentPrice);
 
@@ -118,15 +122,27 @@ public class ProductPriceFacadeImplTest {
     @Test
     public void updateProductCurrentPrice_withNonExistentProduct() throws ProductDetailsNotFoundException {
 
+        Product product = new Product();
+        product.setId(0);
+        product.setName("NonExistent Product");
+
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(0);
         currentPrice.setValue(new BigDecimal("9.99"));
         currentPrice.setCurrencyCode("USD");
 
-        when(productDetailsService.getProductDetailsById(0))
-                .thenThrow(new ProductDetailsNotFoundException("Unable to retrieve product details."));
+        product.setCurrentPrice(currentPrice);
 
-        productPriceFacade.updateProductCurrentPrice(currentPrice);
+        when(productDetailsService.getProductDetailsById(0))
+                .thenThrow(new ProductDetailsNotFoundException(PRODUCT_DETAILS_NOT_FOUND_MESSAGE));
+
+        ProductDetailsNotFoundException productDetailsNotFoundException =
+                assertThrows(ProductDetailsNotFoundException.class, () -> {
+                    productPriceFacade.updateProductCurrentPrice(product);
+                });
+
+        assertThat(productDetailsNotFoundException.getMessage())
+            .isEqualTo(PRODUCT_DETAILS_NOT_FOUND_MESSAGE);
 
         verify(currentPriceService, times(0)).updateCurrentPrice(currentPrice);
 

@@ -31,4 +31,12 @@ public class ProductPriceFacadeImpl implements ProductPriceFacade {
 
         return product;
     }
+
+    @Override
+    public void updateProductCurrentPrice(Product product) throws ProductDetailsNotFoundException {
+
+        ProductDetails productDetails = productDetailsService.getProductDetailsById(product.getId());
+        currentPriceService.updateCurrentPrice(product.getCurrentPrice());
+
+    }
 }
