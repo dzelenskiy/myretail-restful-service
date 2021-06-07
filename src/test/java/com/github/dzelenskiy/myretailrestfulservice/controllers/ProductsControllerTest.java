@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -43,12 +44,6 @@ public class ProductsControllerTest {
 
     @MockBean
     private ProductPriceFacade productPriceFacade;
-
-    @MockBean
-    private ProductDetailsService productDetailsService;
-
-    @MockBean
-    private CurrentPriceService currentPriceService;
 
     @Test
     public void getProductById_success() throws Exception {
@@ -91,33 +86,65 @@ public class ProductsControllerTest {
         product.setId(13860428);
         product.setName("The Big Lebowski (Blu-ray)");
         CurrentPrice currentPrice = new CurrentPrice();
-        currentPrice.setProductId(13860428);
         currentPrice.setValue(new BigDecimal("7.99"));
         currentPrice.setCurrencyCode("USD");
         product.setCurrentPrice(currentPrice);
 
         mockMvc.perform(
-                    put("/v1/products/13860428")
-                    .content(new ObjectMapper().writeValueAsString(product))
-                )
+                put("/v1/products/13860428")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(new ObjectMapper().writeValueAsString(product)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         verify(productPriceFacade, times(1)).updateProductCurrentPrice(product);
-        verify(productDetailsService, times(1)).getProductDetailsById(product.getId());
-        verify(currentPriceService, times(1)).updateCurrentPrice(currentPrice);
 
     }
 
     @Test
     public void updateProductPrice_notFound() throws Exception {
 
+        Product product = new Product();
+        product.setId(0);
+        product.setName("NonExistent Product");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("9.99"));
+        currentPrice.setCurrencyCode("USD");
+        product.setCurrentPrice(currentPrice);
+
+        doThrow(new ProductDetailsNotFoundException("Unable to retrieve product details."))
+                .when(productPriceFacade).updateProductCurrentPrice(product);
+
+        mockMvc.perform(
+                put("/v1/products/0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        verify(productPriceFacade, times(1)).updateProductCurrentPrice(product);
 
     }
 
     @Test
     public void updateProductPrice_missMatchedProductId() throws Exception {
 
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("7.99"));
+        currentPrice.setCurrencyCode("USD");
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
 
     }
 
