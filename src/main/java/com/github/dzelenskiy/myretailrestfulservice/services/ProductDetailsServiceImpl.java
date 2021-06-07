@@ -50,7 +50,7 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
             productDetails = redskyAPIResponse.getProductDetails();
         } catch (Exception e) {
-            throw new ProductDetailsNotFoundException("Unable to retrieve product details.");
+            throw new ProductDetailsNotFoundException("no product found for id " + id);
         }
 
         return productDetails;
