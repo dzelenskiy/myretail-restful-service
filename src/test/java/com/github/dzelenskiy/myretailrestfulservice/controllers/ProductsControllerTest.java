@@ -122,7 +122,8 @@ public class ProductsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(product)))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errors").value("Unable to retrieve product details."));
 
         verify(productPriceFacade, times(1)).updateProductCurrentPrice(product);
 
@@ -144,7 +145,10 @@ public class ProductsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(product)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors")
+                        .value("path id " + 13860123 + " and request body id "
+                                + product.getId() + " do not match"));
 
         verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
 
@@ -188,7 +192,8 @@ public class ProductsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(product)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").value("currency_code must be a valid ISO Currency Code"));
 
         verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
 
