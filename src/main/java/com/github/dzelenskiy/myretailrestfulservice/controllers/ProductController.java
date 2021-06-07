@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1/products")
 public class ProductController {
@@ -27,7 +29,7 @@ public class ProductController {
 
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updateProductPrice(@PathVariable int id, @RequestBody Product product) {
+    public void updateProductPrice(@PathVariable int id, @Valid @RequestBody Product product) {
         try {
             if(id != product.getId())
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
