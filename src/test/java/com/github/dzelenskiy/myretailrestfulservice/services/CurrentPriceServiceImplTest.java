@@ -2,6 +2,7 @@ package com.github.dzelenskiy.myretailrestfulservice.services;
 
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
+import com.github.dzelenskiy.myretailrestfulservice.enums.CurrencyCode;
 import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +41,7 @@ public class CurrentPriceServiceImplTest {
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(13860428);
         currentPrice.setValue(new BigDecimal("7.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
 
         when(currentPriceRepo.findByProductId(13860428)).thenReturn(singletonList(currentPrice));
 
@@ -58,7 +59,7 @@ public class CurrentPriceServiceImplTest {
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(12954218);
         currentPrice.setValue(new BigDecimal("1.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
 
         currentPriceService.updateCurrentPrice(currentPrice);
 

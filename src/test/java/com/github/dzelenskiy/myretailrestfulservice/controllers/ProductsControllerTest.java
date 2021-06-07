@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
+import com.github.dzelenskiy.myretailrestfulservice.enums.CurrencyCode;
 import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacade;
 import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacadeImpl;
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -54,7 +56,7 @@ public class ProductsControllerTest {
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(13860428);
         currentPrice.setValue(new BigDecimal("7.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
         product.setCurrentPrice(currentPrice);
 
         when(productPriceFacade.getProductWithCurrentPriceById(13860428)).thenReturn(product);
@@ -66,7 +68,7 @@ public class ProductsControllerTest {
                 .andExpect(jsonPath("$.id").value(13860428))
                 .andExpect(jsonPath("$.name").value("The Big Lebowski (Blu-ray)"))
                 .andExpect(jsonPath("$.current_price.value").value(7.99))
-                .andExpect(jsonPath("$.current_price.currency_code").value("USD"));
+                .andExpect(jsonPath("$.current_price.currency_code").value(CurrencyCode.USD.toString()));
     }
 
     @Test
@@ -87,7 +89,7 @@ public class ProductsControllerTest {
         product.setName("The Big Lebowski (Blu-ray)");
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setValue(new BigDecimal("7.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
         product.setCurrentPrice(currentPrice);
 
         mockMvc.perform(
@@ -109,7 +111,7 @@ public class ProductsControllerTest {
         product.setName("NonExistent Product");
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setValue(new BigDecimal("9.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
         product.setCurrentPrice(currentPrice);
 
         doThrow(new ProductDetailsNotFoundException("Unable to retrieve product details."))
@@ -134,11 +136,55 @@ public class ProductsControllerTest {
         product.setName("The Big Lebowski (Blu-ray)");
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setValue(new BigDecimal("7.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
         product.setCurrentPrice(currentPrice);
 
         mockMvc.perform(
                 put("/v1/products/13860123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withValidLowerCaseCurrencyCode() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("7.99"));
+        currentPrice.setCurrencyCode(CurrencyCode.CAD.toString().toLowerCase());
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(productPriceFacade, times(1)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withInvalidCurrencyCode() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("7.99"));
+        currentPrice.setCurrencyCode("ZZZ");
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(product)))
                 .andDo(print())

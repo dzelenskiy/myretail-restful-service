@@ -2,6 +2,7 @@ package com.github.dzelenskiy.myretailrestfulservice.facades;
 
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.*;
+import com.github.dzelenskiy.myretailrestfulservice.enums.CurrencyCode;
 import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
 import com.github.dzelenskiy.myretailrestfulservice.services.CurrentPriceService;
@@ -66,7 +67,7 @@ public class ProductPriceFacadeImplTest {
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(13860428);
         currentPrice.setValue(new BigDecimal("7.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
 
         product.setCurrentPrice(currentPrice);
 
@@ -80,7 +81,7 @@ public class ProductPriceFacadeImplTest {
         assertThat(productFromFacade.getName()).isEqualTo("The Big Lebowski (Blu-ray)");
         assertThat(productFromFacade.getCurrentPrice().getProductId()).isEqualTo(13860428);
         assertThat(productFromFacade.getCurrentPrice().getValue()).isEqualTo(new BigDecimal("7.99"));
-        assertThat(productFromFacade.getCurrentPrice().getCurrencyCode()).isEqualTo("USD");
+        assertThat(productFromFacade.getCurrentPrice().getCurrencyCode()).isEqualTo(CurrencyCode.USD.toString());
     }
 
 
@@ -107,7 +108,7 @@ public class ProductPriceFacadeImplTest {
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(13860428);
         currentPrice.setValue(new BigDecimal("7.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
 
         product.setCurrentPrice(currentPrice);
 
@@ -129,7 +130,7 @@ public class ProductPriceFacadeImplTest {
         CurrentPrice currentPrice = new CurrentPrice();
         currentPrice.setProductId(0);
         currentPrice.setValue(new BigDecimal("9.99"));
-        currentPrice.setCurrencyCode("USD");
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
 
         product.setCurrentPrice(currentPrice);
 
