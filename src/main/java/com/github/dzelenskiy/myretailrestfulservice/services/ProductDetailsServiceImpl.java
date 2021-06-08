@@ -1,6 +1,5 @@
 package com.github.dzelenskiy.myretailrestfulservice.services;
 
-import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.ProductDetails;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.RedskyAPIResponse;
 import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 

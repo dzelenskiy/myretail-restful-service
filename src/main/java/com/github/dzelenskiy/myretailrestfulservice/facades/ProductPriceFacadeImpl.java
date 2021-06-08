@@ -36,6 +36,10 @@ public class ProductPriceFacadeImpl implements ProductPriceFacade {
     public void updateProductCurrentPrice(Product product) throws ProductDetailsNotFoundException {
 
         ProductDetails productDetails = productDetailsService.getProductDetailsById(product.getId());
+
+        // must copy product details product id to current price
+        product.getCurrentPrice().setProductId(product.getId());
+
         currentPriceService.updateCurrentPrice(product.getCurrentPrice());
 
     }

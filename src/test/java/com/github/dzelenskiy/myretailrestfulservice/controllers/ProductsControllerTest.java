@@ -7,12 +7,9 @@ import com.github.dzelenskiy.myretailrestfulservice.dtos.Product;
 import com.github.dzelenskiy.myretailrestfulservice.enums.CurrencyCode;
 import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
 import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacade;
-import com.github.dzelenskiy.myretailrestfulservice.facades.ProductPriceFacadeImpl;
-import com.github.dzelenskiy.myretailrestfulservice.services.CurrentPriceService;
-import com.github.dzelenskiy.myretailrestfulservice.services.ProductDetailsService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,9 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.util.Locale;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -33,11 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(locations="classpath:application.properties")
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = { MyretailRestfulServiceApplication.class }
 )
+@TestPropertySource(locations="classpath:application.properties")
 @AutoConfigureMockMvc(addFilters = false)
 public class ProductsControllerTest {
 
@@ -194,6 +189,122 @@ public class ProductsControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors").value("currency_code must be a valid ISO Currency Code"));
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withNullCurrentPrice() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors").value("current_price cannot be null"));
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withThreeFractionalDigits() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("7.999"));
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors")
+                        .value("value must have no more than 5 integral digits and no more than 2 fractional digits"));
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withZero() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("0.00"));
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors")
+                        .value("value may not be less than 0.01"));
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withOneHundredThousand() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setValue(new BigDecimal("100000"));
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors",
+                        Matchers.containsInAnyOrder(
+                                "value may not exceed 99999.99",
+                                "value must have no more than 5 integral digits and no more than 2 fractional digits")));
+
+        verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
+
+    }
+
+    @Test
+    public void updateProductPrice_withCurrentPriceMissingValue() throws Exception {
+
+        Product product = new Product();
+        product.setId(13860428);
+        product.setName("The Big Lebowski (Blu-ray)");
+        CurrentPrice currentPrice = new CurrentPrice();
+        currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
+        product.setCurrentPrice(currentPrice);
+
+        mockMvc.perform(
+                put("/v1/products/13860428")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(product)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors")
+                        .value("value cannot be null"));
 
         verify(productPriceFacade, times(0)).updateProductCurrentPrice(product);
 

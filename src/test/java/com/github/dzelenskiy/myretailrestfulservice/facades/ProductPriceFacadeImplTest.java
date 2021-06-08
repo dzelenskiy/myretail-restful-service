@@ -4,11 +4,8 @@ import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplic
 import com.github.dzelenskiy.myretailrestfulservice.dtos.*;
 import com.github.dzelenskiy.myretailrestfulservice.enums.CurrencyCode;
 import com.github.dzelenskiy.myretailrestfulservice.exceptions.ProductDetailsNotFoundException;
-import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
 import com.github.dzelenskiy.myretailrestfulservice.services.CurrentPriceService;
-import com.github.dzelenskiy.myretailrestfulservice.services.CurrentPriceServiceImpl;
 import com.github.dzelenskiy.myretailrestfulservice.services.ProductDetailsService;
-import com.github.dzelenskiy.myretailrestfulservice.services.ProductDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,12 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = { MyretailRestfulServiceApplication.class })
 @TestPropertySource(locations="classpath:application.properties")
-@SpringBootTest(
-        //webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = { MyretailRestfulServiceApplication.class }
-)
-//@AutoConfigureMockMvc(addFilters = false)
 public class ProductPriceFacadeImplTest {
 
     private static final String PRODUCT_DETAILS_NOT_FOUND_MESSAGE =

@@ -3,7 +3,7 @@ package com.github.dzelenskiy.myretailrestfulservice.services;
 import com.github.dzelenskiy.myretailrestfulservice.MyretailRestfulServiceApplication;
 import com.github.dzelenskiy.myretailrestfulservice.dtos.CurrentPrice;
 import com.github.dzelenskiy.myretailrestfulservice.enums.CurrencyCode;
-import com.github.dzelenskiy.myretailrestfulservice.repos.dynamodb.CurrentPriceRepo;
+import com.github.dzelenskiy.myretailrestfulservice.repos.CurrentPriceMongoRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,22 +15,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 
 import static java.util.Collections.singletonList;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = { MyretailRestfulServiceApplication.class })
 @TestPropertySource(locations="classpath:application.properties")
-@SpringBootTest(
-        //webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = { MyretailRestfulServiceApplication.class }
-)
-//@AutoConfigureMockMvc(addFilters = false)
 public class CurrentPriceServiceImplTest {
 
     @Mock
-    private CurrentPriceRepo currentPriceRepo;
+    private CurrentPriceMongoRepo currentPriceMongoRepo;
 
     @InjectMocks
     private CurrentPriceService currentPriceService = new CurrentPriceServiceImpl();
@@ -43,7 +37,7 @@ public class CurrentPriceServiceImplTest {
         currentPrice.setValue(new BigDecimal("7.99"));
         currentPrice.setCurrencyCode(CurrencyCode.USD.toString());
 
-        when(currentPriceRepo.findByProductId(13860428)).thenReturn(singletonList(currentPrice));
+        when(currentPriceMongoRepo.findByProductId(13860428)).thenReturn(singletonList(currentPrice));
 
         CurrentPrice currentPriceFromService = currentPriceService.getCurrentPriceByProductId(13860428);
 
@@ -63,7 +57,7 @@ public class CurrentPriceServiceImplTest {
 
         currentPriceService.updateCurrentPrice(currentPrice);
 
-        verify(currentPriceRepo, times(1)).save(currentPrice);
+        verify(currentPriceMongoRepo, times(1)).save(currentPrice);
 
     }
 
